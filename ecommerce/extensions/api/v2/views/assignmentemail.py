@@ -2,11 +2,14 @@
 import logging
 from datetime import datetime
 
-from ecommerce_worker.sailthru.v1.tasks import send_code_assignment_email
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+# from ecommerce.extensions.offer.constants import OFFER_ASSIGNED
+# from ecommerce.extensions.offer.models import OfferAssignment
+from ecommerce_worker.sailthru.v1.tasks import send_code_assignment_email
 
 logger = logging.getLogger(__name__)
 
@@ -71,7 +74,37 @@ class AssignmentEmail(APIView):
         }
         return response_status
 
-    def post(self, request):
+    # def update_email_status(self, email, code):
+    #     assigned_offer = OfferAssignment.objects.get(user_email=email, code=code)
+    #     if assigned_offer:
+    #         assigned_offer.status = OFFER_ASSIGNED
+    #         OfferAssignment.save(update_fields=['status'])
+    #     else:
+    #         raise OfferAssignment.DoesNotExist
+
+    def get(self, request):
+        """
+        Returns the email default template.
+        """
+        email_template = ('Your learning manager has provided you with a new access code to take a course at edX.' 
+                          ' You may redeem this code for {code_usage_count} courses. '
+
+                          'edX login: {user_email}'
+                          'Enrollment url: {enrollment_url}'
+                          'Access Code: {code}'
+                          'Expiration date: {code_expiration_date}'
+
+                          'You may go directly to the Enrollment URL to view courses that are available for this code' 
+                          ' or you can insert the access code at check out under "coupon code" for applicable courses.'
+
+                          'For any questions, please reach out to your Learning Manager.')
+
+        return Response(
+            status=status.HTTP_200_OK,
+            data={'template': email_template}
+        )
+
+    def post(self, request):  # pylint: disable=unused-argument
         """
         POST /enterprise/api/v1/request_codes
 
@@ -152,6 +185,7 @@ class AssignmentEmail(APIView):
                     response_status = self.get_response_status(
                         learner_email, code, 'Dispatched', missing_keys, missing_values, template_key_error)
                     email_status.append(response_status)
+                    # self.update_email_status(learner_email, code)
                 except Exception as exc:  # pylint: disable=broad-except
                     logger.exception('[Code Management] Email sending task raised: %r', exc)
                     response_status = self.get_response_status(
