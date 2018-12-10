@@ -82,11 +82,11 @@ class AssignmentEmail(APIView):
     #     else:
     #         raise OfferAssignment.DoesNotExist
 
-    def get(self, request):
+    def get(self, request):  # pylint: disable=unused-argument
         """
         Returns the email default template.
         """
-        email_template = ('Your learning manager has provided you with a new access code to take a course at edX.' 
+        email_template = ('Your learning manager has provided you with a new access code to take a course at edX.'
                           ' You may redeem this code for {code_usage_count} courses. '
 
                           'edX login: {user_email}'
@@ -94,7 +94,7 @@ class AssignmentEmail(APIView):
                           'Access Code: {code}'
                           'Expiration date: {code_expiration_date}'
 
-                          'You may go directly to the Enrollment URL to view courses that are available for this code' 
+                          'You may go directly to the Enrollment URL to view courses that are available for this code'
                           ' or you can insert the access code at check out under "coupon code" for applicable courses.'
 
                           'For any questions, please reach out to your Learning Manager.')
@@ -104,7 +104,7 @@ class AssignmentEmail(APIView):
             data={'template': email_template}
         )
 
-    def post(self, request):  # pylint: disable=unused-argument
+    def post(self, request):
         """
         POST /enterprise/api/v1/request_codes
 
