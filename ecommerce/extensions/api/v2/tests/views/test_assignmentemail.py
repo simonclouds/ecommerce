@@ -5,6 +5,7 @@ import json
 import ddt
 import mock
 from django.urls import reverse
+from rest_framework import status
 
 from ecommerce.tests.testcases import TestCase
 
@@ -245,3 +246,21 @@ class AssignmentEmailTests(TestCase):
         self.assertEqual(response.status_code, status_code)
         self.assertEqual(response_data, json.loads(response.content))
         self.assertEqual(mock_send_code_assignment_email.call_count, count)
+
+    def test_successful_get(self):
+        """ Verify that get returns the default template """
+        expected_data = ('Your learning manager has provided you with a new access code to take a course at edX.'
+                         ' You may redeem this code for {code_usage_count} courses. '
+
+                         'edX login: {user_email}'
+                         'Enrollment url: {enrollment_url}'
+                         'Access Code: {code}'
+                         'Expiration date: {code_expiration_date}'
+
+                         'You may go directly to the Enrollment URL to view courses that are available for this code'
+                         ' or you can insert the access code at check out under "coupon code" for applicable courses.'
+
+                         'For any questions, please reach out to your Learning Manager.')
+        response = self.client.get(self.path)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertDictEqual(response.data, {'template': expected_data})
