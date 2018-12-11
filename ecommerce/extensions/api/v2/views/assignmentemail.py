@@ -173,7 +173,7 @@ class AssignmentEmail(APIView):
 
             if not missing_keys and not missing_values and not template_key_error:
                 try:
-                    send_code_assignment_email.delay(learner_email, subject, email_body)
+                    send_code_assignment_email.delay(learner_email, code, subject, email_body)
                     response_status = self.get_response_status(
                         learner_email, code, 'Dispatched', missing_keys, missing_values, template_key_error)
                     email_status.append(response_status)
@@ -253,4 +253,4 @@ class AssignmentEmailStatus(APIView):
                     'status': 'failed',
                     'error': str(exc)
                 }
-        return Response({'status': update_status}, status=status.HTTP_200_OK)
+        return Response(update_status, status=status.HTTP_200_OK)

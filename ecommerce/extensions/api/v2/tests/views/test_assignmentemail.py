@@ -297,12 +297,12 @@ class AssignmentEmailStatusTests(TestCase):
                 'code': 'GIL7RUEOU7VHBH7Q',
                 'status': 'success',
             },
-            {'status': {
+            {
                 'user_email': 'johndoe@unknown.com',
                 'code': 'GIL7RUEOU7VHBH7Q',
                 'status': 'updated',
                 'error': ''
-            }},
+            },
             200,
             None,
             1
@@ -314,12 +314,12 @@ class AssignmentEmailStatusTests(TestCase):
                 'code': 'GIL7RUEOU7VHBH7Q',
                 'status': 'success',
             },
-            {'status': {
+            {
                 'user_email': 'johndoe@unknown.com',
                 'code': 'GIL7RUEOU7VHBH7Q',
                 'status': 'failed',
                 'error': ''
-            }},
+            },
             200,
             Exception(),
             1
