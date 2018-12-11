@@ -193,9 +193,8 @@ class AssignmentEmailStatus(APIView):
     """Updated assignment email status in offer_assignment model."""
     permission_classes = (IsAuthenticated,)
 
-    def update_email_status(self, email, code):
+    def update_email_status(self, email, code):  # pylint: disable=unused-argument
         """Update the OfferAssignment model"""
-        """TODO uncomment when model is available"""
         # assigned_offer = OfferAssignment.objects.get(user_email=email, code=code)
         # if assigned_offer:
         #     assigned_offer.status = OFFER_ASSIGNED
