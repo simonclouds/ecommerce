@@ -74,14 +74,6 @@ class AssignmentEmail(APIView):
         }
         return response_status
 
-    # def update_email_status(self, email, code):
-    #     assigned_offer = OfferAssignment.objects.get(user_email=email, code=code)
-    #     if assigned_offer:
-    #         assigned_offer.status = OFFER_ASSIGNED
-    #         OfferAssignment.save(update_fields=['status'])
-    #     else:
-    #         raise OfferAssignment.DoesNotExist
-
     def get(self, request):  # pylint: disable=unused-argument
         """
         Returns the email default template.
@@ -106,7 +98,7 @@ class AssignmentEmail(APIView):
 
     def post(self, request):
         """
-        POST /enterprise/api/v1/request_codes
+        POST /ecommerce/api/v2/assignmentemail/sendemails
 
         Requires a JSON object of the following format:
        {
@@ -185,9 +177,8 @@ class AssignmentEmail(APIView):
                     response_status = self.get_response_status(
                         learner_email, code, 'Dispatched', missing_keys, missing_values, template_key_error)
                     email_status.append(response_status)
-                    # self.update_email_status(learner_email, code)
                 except Exception as exc:  # pylint: disable=broad-except
-                    logger.exception('[Code Management] Email sending task raised: %r', exc)
+                    logger.exception('[Code Management] AssignmentEmail sending task raised: %r', exc)
                     response_status = self.get_response_status(
                         learner_email, code, 'Failed', missing_keys, missing_values, template_key_error)
                     email_status.append(response_status)
@@ -196,3 +187,71 @@ class AssignmentEmail(APIView):
                     learner_email, code, 'Failed', missing_keys, missing_values, template_key_error)
                 email_status.append(response_status)
         return Response({'status': email_status}, status=status.HTTP_200_OK)
+
+
+class AssignmentEmailStatus(APIView):
+    """Updated assignment email status in offer_assignment model."""
+    permission_classes = (IsAuthenticated,)
+
+    def update_email_status(self, email, code):
+        """Update the OfferAssignment model"""
+        """TODO uncomment when model is available"""
+        # assigned_offer = OfferAssignment.objects.get(user_email=email, code=code)
+        # if assigned_offer:
+        #     assigned_offer.status = OFFER_ASSIGNED
+        #     OfferAssignment.save(update_fields=['status'])
+        # else:
+        #     raise OfferAssignment.DoesNotExist
+
+    def post(self, request):
+        """
+        POST /ecommerce/api/v2/assignmentemail/updatestatus
+
+        Requires a JSON object of the following format:
+       {
+            'user_email': 'johndoe@unknown.com,
+            'code': 'GIL7RUEOU7VHBH7Q',
+            'status': 'success'
+        }
+        Returns a JSON object of the following format:
+       {
+                   'user_email': johndoe@unknown.com,
+                   'code': 'GIL7RUEOU7VHBH7Q',
+                   'status': 'updated',
+                   'error': ''
+        }
+
+        Keys:
+        *user_email*
+            Email of the customer who will receive the code.
+        *code*
+            Code for the user.
+        *status*
+            The offer_assignment model update status
+        *error*
+            Error detail. Empty on a successful update.
+        """
+
+        user_email = request.data.get('user_email')
+        code = request.data.get('code')
+        email_status = request.data.get('status')
+
+        if email_status == 'success':
+            try:
+                self.update_email_status(user_email, code)
+                update_status = {
+                    'user_email': user_email,
+                    'code': code,
+                    'status': 'updated',
+                    'error': ''
+                }
+            # except OfferAssignment.DoesNotExist as exc:
+            except Exception as exc:  # pylint: disable=broad-except
+                logger.exception('[Code Management] AssignmentEmailStatus update raised: %r', exc)
+                update_status = {
+                    'user_email': user_email,
+                    'code': code,
+                    'status': 'failed',
+                    'error': str(exc)
+                }
+        return Response({'status': update_status}, status=status.HTTP_200_OK)

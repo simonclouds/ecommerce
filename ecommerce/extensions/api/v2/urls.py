@@ -88,7 +88,8 @@ ENTERPRISE_URLS = [
 ]
 
 ASSIGNMENT_EMAIL_URLS = [
-    url(r'^$', assignment_email.AssignmentEmail.as_view(), name='assignmentemail')
+    url(r'^sendemails$', assignment_email.AssignmentEmail.as_view(), name='send_emails'),
+    url(r'^updatestatus$', assignment_email.AssignmentEmailStatus.as_view(), name='update_status')
 ]
 
 urlpatterns = [
@@ -102,7 +103,7 @@ urlpatterns = [
     url(r'^refunds/', include(REFUND_URLS, namespace='refunds')),
     url(r'^retirement/', include(RETIREMENT_URLS, namespace='retirement')),
     url(r'^sdn/', include(SDN_URLS, namespace='sdn')),
-    url(r'^assignmentemail/', assignment_email.AssignmentEmail.as_view(), name='assignmentemail'),
+    url(r'^assignmentemail/', include(ASSIGNMENT_EMAIL_URLS, namespace='assignmentemail')),
 ]
 
 router = ExtendedSimpleRouter()
