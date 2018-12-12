@@ -17,9 +17,8 @@ from ecommerce.extensions.basket.utils import basket_add_enterprise_catalog_attr
 from ecommerce.extensions.catalogue.tests.mixins import DiscoveryTestMixin
 from ecommerce.extensions.offer.constants import (
     OFFER_ASSIGNMENT_EMAIL_PENDING,
-    OFFER_ASSIGNED,
     OFFER_ASSIGNMENT_REVOKED,
-    OFFER_REDEEMED,
+    OFFER_REDEEMED
 )
 from ecommerce.extensions.test import factories
 from ecommerce.tests.factories import ProductFactory, SiteConfigurationFactory
